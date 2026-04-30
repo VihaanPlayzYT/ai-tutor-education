@@ -40,18 +40,31 @@ section[data-testid="stMain"] > div {
     animation: fadeSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-/* ── Model card select buttons — hidden, card acts as button ── */
-[data-testid="stButton"] button[kind="secondary"].model-select,
+/* ── Model card buttons ── */
 div[data-testid="column"] .stButton > button {
-    opacity: 0 !important;
-    height: 4px !important;
-    min-height: 0 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    border: none !important;
-    pointer-events: all !important;
-    position: relative !important;
-    top: -8px !important;
+    background: #13132a !important;
+    border: 2px solid #2d2d4e !important;
+    border-radius: 12px !important;
+    padding: 0.75rem 0.9rem !important;
+    height: auto !important;
+    min-height: 90px !important;
+    width: 100% !important;
+    text-align: left !important;
+    white-space: pre-wrap !important;
+    line-height: 1.5 !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+    color: #c4b5fd !important;
+    font-size: 0.8rem !important;
+}
+div[data-testid="column"] .stButton > button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 24px rgba(99,102,241,0.3) !important;
+    border-color: #6366f1 !important;
+}
+div[data-testid="column"] .stButton > button[kind="primary"] {
+    background: #1e1b3a !important;
+    border: 2px solid #fbbf24 !important;
+    box-shadow: 0 4px 20px rgba(251,191,36,0.2) !important;
 }
 
 /* ── Hero Banner ── */
@@ -289,27 +302,11 @@ col_flash, col_pro = st.columns(2)
 for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
     info = MODEL_INFO[model_key]
     selected = st.session_state.gemini_model == model_key
-    border = f"2px solid {info['color']}" if selected else "2px solid #2d2d4e"
-    bg = "#1e1b3a" if selected else "#13132a"
-    glow = f"0 4px 20px {info['color']}33" if selected else "none"
     check = "✓ " if selected else ""
+    label = f"{info['icon']}  {check}{info['label']}\n{info['tagline']}\n{info['desc']}"
     with col:
-        st.markdown(f"""
-        <div class="model-card" style="background:{bg}; border:{border}; box-shadow:{glow};">
-            <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.2rem;">
-                <span style="font-size:1.1rem;">{info['icon']}</span>
-                <span style="font-weight:800; color:{info['color']}; font-size:0.88rem;">{check}{info['label']}</span>
-            </div>
-            <div style="font-size:0.74rem; color:#9ca3af; margin-bottom:0.25rem; font-style:italic;">{info['tagline']}</div>
-            <div style="font-size:0.76rem; color:#c4b5fd; line-height:1.4;">{info['desc']}</div>
-            <div style="margin-top:0.5rem; font-size:0.72rem; color:{info['color']}; opacity:0.8;">
-                {'● Selected' if selected else 'Click to select →'}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        # Invisible button covering the card area
-        if st.button(f"{'✓ ' if selected else ''}{info['label']}", key=f"sel_{model_key}",
-                     use_container_width=True, type="primary" if selected else "secondary"):
+        if st.button(label, key=f"sel_{model_key}", use_container_width=True,
+                     type="primary" if selected else "secondary"):
             st.session_state.gemini_model = model_key
             st.rerun()
 
