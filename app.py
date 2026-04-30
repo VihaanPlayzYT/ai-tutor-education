@@ -47,24 +47,32 @@ div[data-testid="column"] .stButton > button {
     border-radius: 12px !important;
     padding: 0.75rem 0.9rem !important;
     height: auto !important;
-    min-height: 90px !important;
+    min-height: 100px !important;
     width: 100% !important;
     text-align: left !important;
     white-space: pre-wrap !important;
-    line-height: 1.5 !important;
+    line-height: 1.6 !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease !important;
     color: #c4b5fd !important;
-    font-size: 0.8rem !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
 }
 div[data-testid="column"] .stButton > button:hover {
     transform: translateY(-2px) !important;
     box-shadow: 0 6px 24px rgba(99,102,241,0.3) !important;
     border-color: #6366f1 !important;
+    background: #1a1730 !important;
 }
 div[data-testid="column"] .stButton > button[kind="primary"] {
     background: #1e1b3a !important;
     border: 2px solid #fbbf24 !important;
     box-shadow: 0 4px 20px rgba(251,191,36,0.2) !important;
+    color: #fde68a !important;
+}
+div[data-testid="column"]:last-child .stButton > button[kind="primary"] {
+    border-color: #a78bfa !important;
+    box-shadow: 0 4px 20px rgba(167,139,250,0.2) !important;
+    color: #ddd6fe !important;
 }
 
 /* ── Hero Banner ── */
@@ -302,13 +310,14 @@ col_flash, col_pro = st.columns(2)
 for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
     info = MODEL_INFO[model_key]
     selected = st.session_state.gemini_model == model_key
-    check = "✓ " if selected else ""
-    label = f"{info['icon']}  {check}{info['label']}\n{info['tagline']}\n{info['desc']}"
+    check = "✓  " if selected else "   "
+    label = f"{info['icon']}  {info['label']}\n{check}{info['tagline']}\n{info['desc']}"
     with col:
         if st.button(label, key=f"sel_{model_key}", use_container_width=True,
                      type="primary" if selected else "secondary"):
-            st.session_state.gemini_model = model_key
-            st.rerun()
+            if not selected:
+                st.session_state.gemini_model = model_key
+                st.rerun()
 
 # ── Input Area ────────────────────────────────────────────────────────────────
 with st.container():
