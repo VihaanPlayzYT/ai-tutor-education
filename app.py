@@ -21,7 +21,7 @@ html, body, [class*="css"] {
 }
 
 .stApp {
-    background: #f5f7ff;
+    background: #0f0f1a;
 }
 
 /* ── Hide default Streamlit chrome ── */
@@ -51,12 +51,12 @@ html, body, [class*="css"] {
 
 /* ── Card ── */
 .card {
-    background: white;
+    background: #1a1a2e;
     border-radius: 16px;
     padding: 1.5rem;
     margin-bottom: 1.2rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    border: 1px solid #ede9fe;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+    border: 1px solid #2d2d4e;
 }
 
 /* ── Subject Badge ── */
@@ -68,10 +68,10 @@ html, body, [class*="css"] {
     font-size: 0.85rem;
     letter-spacing: 0.3px;
 }
-.badge-math    { background: #fef3c7; color: #92400e; }
-.badge-science { background: #d1fae5; color: #065f46; }
-.badge-english { background: #dbeafe; color: #1e40af; }
-.badge-default { background: #ede9fe; color: #4c1d95; }
+.badge-math    { background: #3d2e00; color: #fcd34d; }
+.badge-science { background: #003d2e; color: #6ee7b7; }
+.badge-english { background: #00213d; color: #93c5fd; }
+.badge-default { background: #1e1b4b; color: #c4b5fd; }
 
 /* ── Chat bubbles ── */
 .bubble-user {
@@ -91,30 +91,31 @@ html, body, [class*="css"] {
     margin-bottom: 1rem;
 }
 .bubble-ai {
-    background: white;
-    border: 1px solid #ede9fe;
-    color: #1f2937;
+    background: #1a1a2e;
+    border: 1px solid #2d2d4e;
+    color: #e2e8f0;
     border-radius: 18px 18px 18px 4px;
     padding: 0.9rem 1.2rem;
     margin: 0.2rem auto 1rem 0;
     max-width: 90%;
     font-size: 0.97rem;
     line-height: 1.6;
-    box-shadow: 0 2px 8px rgba(79,70,229,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 /* ── Input styling ── */
 .stTextInput > div > div > input {
     border-radius: 12px !important;
-    border: 2px solid #ede9fe !important;
+    border: 2px solid #2d2d4e !important;
     font-family: 'Nunito', sans-serif !important;
     font-size: 1rem !important;
     padding: 0.75rem 1rem !important;
-    background: white !important;
+    background: #1a1a2e !important;
+    color: #e2e8f0 !important;
 }
 .stTextInput > div > div > input:focus {
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.1) !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2) !important;
 }
 
 /* ── Buttons ── */
@@ -137,16 +138,18 @@ html, body, [class*="css"] {
     box-shadow: 0 6px 20px rgba(79,70,229,0.45) !important;
 }
 .stButton > button[kind="secondary"] {
-    background: white !important;
-    border: 2px solid #4f46e5 !important;
-    color: #4f46e5 !important;
+    background: #1a1a2e !important;
+    border: 2px solid #6366f1 !important;
+    color: #a5b4fc !important;
 }
 
 /* ── Selectbox ── */
 .stSelectbox > div > div {
     border-radius: 12px !important;
-    border: 2px solid #ede9fe !important;
+    border: 2px solid #2d2d4e !important;
     font-family: 'Nunito', sans-serif !important;
+    background: #1a1a2e !important;
+    color: #e2e8f0 !important;
 }
 
 /* ── Spinner ── */
@@ -155,20 +158,20 @@ html, body, [class*="css"] {
 }
 
 /* ── Divider ── */
-hr { border-color: #ede9fe; }
+hr { border-color: #2d2d4e; }
 
 /* ── Empty state ── */
 .empty-state {
     text-align: center;
     padding: 2.5rem 1rem;
-    color: #9ca3af;
+    color: #4b5563;
 }
 .empty-state .icon { font-size: 3rem; margin-bottom: 0.5rem; }
 .empty-state p { font-size: 0.95rem; }
 
 /* ── Confidence bar ── */
 .conf-bar-wrap {
-    background: #f3f4f6;
+    background: #2d2d4e;
     border-radius: 999px;
     height: 8px;
     margin-top: 0.4rem;
@@ -177,7 +180,7 @@ hr { border-color: #ede9fe; }
 .conf-bar-fill {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #4f46e5, #7c3aed);
+    background: linear-gradient(90deg, #6366f1, #a78bfa);
     transition: width 0.6s ease;
 }
 </style>
@@ -270,10 +273,10 @@ if predict_btn and question.strip():
     st.markdown(f"""
     <div class="card">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.7rem;">
-            <span style="font-weight:700; color:#374151;">Subject Detected</span>
+            <span style="font-weight:700; color:#c4b5fd;">Subject Detected</span>
             {subject_badge(subject)}
         </div>
-        <div style="font-size:0.85rem; color:#6b7280; margin-bottom:0.3rem;">Confidence: <b>{confidence:.1%}</b></div>
+        <div style="font-size:0.85rem; color:#a5b4fc; margin-bottom:0.3rem;">Confidence: <b>{confidence:.1%}</b></div>
         <div class="conf-bar-wrap">
             <div class="conf-bar-fill" style="width:{confidence*100:.1f}%"></div>
         </div>
@@ -351,6 +354,6 @@ else:
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown(
-    '<p style="text-align:center; color:#9ca3af; font-size:0.8rem;">AI Tutor • ML Subject Detection + Google Gemini • Made with ❤️ for education access</p>',
+    '<p style="text-align:center; color:#4b5563; font-size:0.8rem;">AI Tutor • ML Subject Detection + Google Gemini • Made with ❤️ for education access</p>',
     unsafe_allow_html=True
 )
