@@ -40,39 +40,36 @@ section[data-testid="stMain"] > div {
     animation: fadeSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) both;
 }
 
-/* ── Model card buttons ── */
+/* ── Model card select buttons — slim under card ── */
 div[data-testid="column"] .stButton > button {
-    background: #13132a !important;
-    border: 2px solid #2d2d4e !important;
-    border-radius: 12px !important;
-    padding: 0.75rem 0.9rem !important;
+    border-radius: 8px !important;
+    padding: 0.3rem 0.9rem !important;
     height: auto !important;
-    min-height: 100px !important;
+    min-height: 0 !important;
     width: 100% !important;
-    text-align: left !important;
-    white-space: pre-wrap !important;
-    line-height: 1.6 !important;
-    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
-    color: #c4b5fd !important;
-    font-size: 0.82rem !important;
-    font-weight: 600 !important;
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    transition: all 0.15s ease !important;
+    margin-top: 0 !important;
 }
-div[data-testid="column"] .stButton > button:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 24px rgba(99,102,241,0.3) !important;
+div[data-testid="column"] .stButton > button[kind="secondary"] {
+    background: transparent !important;
+    border: 1px solid #2d2d4e !important;
+    color: #6b7280 !important;
+}
+div[data-testid="column"] .stButton > button[kind="secondary"]:hover {
     border-color: #6366f1 !important;
-    background: #1a1730 !important;
+    color: #a5b4fc !important;
 }
 div[data-testid="column"] .stButton > button[kind="primary"] {
-    background: #1e1b3a !important;
-    border: 2px solid #fbbf24 !important;
-    box-shadow: 0 4px 20px rgba(251,191,36,0.2) !important;
-    color: #fde68a !important;
+    background: transparent !important;
+    border: 1px solid #fbbf24 !important;
+    color: #fbbf24 !important;
+    box-shadow: none !important;
 }
 div[data-testid="column"]:last-child .stButton > button[kind="primary"] {
     border-color: #a78bfa !important;
-    box-shadow: 0 4px 20px rgba(167,139,250,0.2) !important;
-    color: #ddd6fe !important;
+    color: #a78bfa !important;
 }
 
 /* ── Hero Banner ── */
@@ -310,10 +307,29 @@ col_flash, col_pro = st.columns(2)
 for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
     info = MODEL_INFO[model_key]
     selected = st.session_state.gemini_model == model_key
-    check = "✓  " if selected else "   "
-    label = f"{info['icon']}  {info['label']}\n{check}{info['tagline']}\n{info['desc']}"
+    color = info['color']
+    bg = "#1e1b3a" if selected else "#13132a"
+    border = f"2px solid {color}" if selected else "2px solid #2d2d4e"
+    glow = f"0 0 18px {color}44, 0 4px 20px {color}22" if selected else "none"
+    check = " ✓" if selected else ""
     with col:
-        if st.button(label, key=f"sel_{model_key}", use_container_width=True,
+        st.markdown(f"""
+        <div style="background:{bg}; border:{border}; border-radius:12px;
+                    padding:0.8rem 0.95rem; box-shadow:{glow}; margin-bottom:0.3rem;
+                    transition: all 0.2s ease;">
+            <div style="font-size:0.92rem; font-weight:800; color:{color}; margin-bottom:0.25rem;">
+                {info['icon']} {info['label']}{check}
+            </div>
+            <div style="font-size:0.73rem; color:#9ca3af; font-style:italic; margin-bottom:0.3rem;">
+                {info['tagline']}
+            </div>
+            <div style="font-size:0.78rem; color:#d1d5db; line-height:1.5;">
+                {info['desc']}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        btn_label = "● Selected" if selected else "Select →"
+        if st.button(btn_label, key=f"sel_{model_key}", use_container_width=True,
                      type="primary" if selected else "secondary"):
             if not selected:
                 st.session_state.gemini_model = model_key
