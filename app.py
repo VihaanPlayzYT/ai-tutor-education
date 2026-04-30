@@ -5,7 +5,7 @@ import google.generativeai as genai
 st.set_page_config(page_title="AI Tutor", page_icon="🎓", layout="centered")
 
 st.title("🎓 AI Tutor")
-st.markdown("**Smart Academic Helper** — Subject Prediction + Answers from Gemini")
+st.markdown("**ML Subject Prediction + Gemini AI Answers**")
 
 # Load ML Model
 @st.cache_resource
@@ -34,61 +34,53 @@ question = st.text_input(
     placeholder="e.g., Solve 2x + 5 = 15 or Explain ionic and covalent bonding"
 )
 
-# Buttons
-col1, col2 = st.columns([1, 1])
-with col1:
-    predict_btn = st.button("🔍 Predict Subject", type="secondary")
-with col2:
-    gemini_btn = st.button("🧠 Get Gemini Answer", type="primary")
-
-# Predict Subject Only
-if predict_btn:
-    if question.strip():
-        with st.spinner("Predicting..."):
-            vec = vectorizer.transform([question])
-            subject = model.predict(vec)[0]
-            confidence = model.predict_proba(vec).max()
-            st.success(f"**Predicted Subject:** {subject}")
-            st.info(f"**Confidence:** {confidence:.1%}")
-    else:
-        st.warning("Please enter a question.")
-
-# Get Gemini Answer - Full Width
-if gemini_btn:
+if st.button("🧠 Get Gemini Answer", type="primary"):
     if not question.strip():
         st.warning("Please enter a question.")
-    else:
-        with st.spinner("Gemini is thinking..."):
-            # Subject Prediction
-            vec = vectorizer.transform([question])
-            predicted_subject = model.predict(vec)[0]
-            confidence = model.predict_proba(vec).max()
+        st.stop()
 
-            # Call Gemini
-            prompt = f"""You are an excellent academic tutor.
+    with st.spinner("Analyzing with AI Tutor..."):
+        # Step 1: Predict subject using your dataset-trained model
+        vec = vectorizer.transform([question])
+        predicted_subject = model.predict(vec)[0]
+        confidence = model.predict_proba(vec).max()
+
+        # Step 2: Send to Gemini with subject context
+        prompt = f"""You are an expert academic tutor.
+
 Student's question: "{question}"
 
-Predicted subject: {predicted_subject}
+The AI model predicted this question belongs to **{predicted_subject}** subject with {confidence:.1%} confidence.
 
-Give a clear, detailed, and educational answer. Explain step by step. Use simple language suitable for students."""
+Provide a clear, accurate, and well-explained answer suitable for high school or early college students.
+Explain concepts step by step. Use examples where helpful."""
 
-            try:
-                response = gemini_model.generate_content(prompt)
-                gemini_answer = response.text
+        try:
+            response = gemini_model.generate_content(prompt)
+            gemini_answer = response.text
 
-                # Display Subject Info
-                col_a, col_b = st.columns(2)
-                with col_a:
-                    st.success(f"**Subject:** {predicted_subject}")
-                with col_b:
-                    st.info(f"**Confidence:** {confidence:.1%}")
+            # Display Results
+            col1, col2 = st.columns(2)
+            with col1:
+                st.success(f"**Predicted Subject:** {predicted_subject}")
+            with col2:
+                st.info(f"**ML Confidence:** {confidence:.1%}")
 
-                # Full Width Answer
-                st.markdown("### 📝 Gemini's Answer")
-                st.markdown(gemini_answer)
+            st.markdown("### 📝 Gemini's Answer")
+            st.markdown(gemini_answer)
 
-            except Exception as e:
-                st.error(f"Error with Gemini: {str(e)}")
+        except Exception as e:
+            st.error(f"Gemini Error: {e}")
 
-# Footer
-st.caption("AI Tutor • ML Subject Prediction + Google Gemini 2.5 Flash")
+# Optional: Just predict subject
+if st.button("🔍 Predict Subject Only"):
+    if question.strip():
+        vec = vectorizer.transform([question])
+        subject = model.predict(vec)[0]
+        conf = model.predict_proba(vec).max()
+        st.success(f"**Subject:** {subject}")
+        st.info(f"**Confidence:** {conf:.1%}")
+    else:
+        st.warning("Please enter a question.")
+
+st.caption("AI Tutor • Dataset-trained ML Model + Google Gemini 2.5 Flash")
