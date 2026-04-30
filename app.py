@@ -164,10 +164,10 @@ hr { border-color: #2d2d4e; }
 .empty-state {
     text-align: center;
     padding: 2.5rem 1rem;
-    color: #4b5563;
+    color: #a5b4fc;
 }
-.empty-state .icon { font-size: 3rem; margin-bottom: 0.5rem; }
-.empty-state p { font-size: 0.95rem; }
+.empty-state .icon { font-size: 3rem; margin-bottom: 0.5rem; filter: drop-shadow(0 0 10px rgba(165,180,252,0.5)); }
+.empty-state p { font-size: 0.97rem; color: #c4b5fd; line-height: 1.7; }
 
 /* ── Confidence bar ── */
 .conf-bar-wrap {
@@ -221,14 +221,6 @@ def subject_badge(subject):
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### ⚙️ Settings")
-    model_choice = st.selectbox(
-        "Gemini Model",
-        ["gemini-2.5-flash", "gemini-2.5-pro"],
-        index=0 if st.session_state.gemini_model == "gemini-2.5-flash" else 1,
-        help="Flash is faster; Pro is more thorough."
-    )
-    st.session_state.gemini_model = model_choice
-
     st.markdown("---")
     if st.button("🗑️ Clear Chat", type="secondary", use_container_width=True):
         st.session_state.messages = []
@@ -236,7 +228,7 @@ with st.sidebar:
 
     st.markdown("---")
     st.markdown("**How to use**")
-    st.caption("1. Type your academic question\n2. Hit **Predict** to see the subject\n3. Hit **Ask Tutor** for a full explanation")
+    st.caption("1. Pick your Gemini model\n2. Type your academic question\n3. Hit **Predict** to see the subject\n4. Hit **Ask Tutor** for a full explanation")
 
 # ── Hero ──────────────────────────────────────────────────────────────────────
 st.markdown("""
@@ -245,6 +237,49 @@ st.markdown("""
     <p>Your smart academic helper — ask any question in Math, Science, or English</p>
 </div>
 """, unsafe_allow_html=True)
+
+# ── Model Selector ───────────────────────────────────────────────────────────
+MODEL_INFO = {
+    "gemini-2.5-flash": {
+        "icon": "⚡",
+        "label": "Gemini 2.5 Flash",
+        "tagline": "Fast & efficient",
+        "desc": "Best for quick answers, homework help, and everyday questions. Responds in seconds.",
+        "color": "#fbbf24",
+    },
+    "gemini-2.5-pro": {
+        "icon": "🧠",
+        "label": "Gemini 2.5 Pro",
+        "tagline": "Deep & thorough",
+        "desc": "Best for complex problems, detailed explanations, and multi-step reasoning.",
+        "color": "#a78bfa",
+    },
+}
+
+st.markdown("#### 🤖 Choose your AI model")
+col_flash, col_pro = st.columns(2)
+
+for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
+    info = MODEL_INFO[model_key]
+    selected = st.session_state.gemini_model == model_key
+    border = f"2px solid {info['color']}" if selected else "2px solid #2d2d4e"
+    bg = "#1a1a2e" if selected else "#13132a"
+    check = "✅ " if selected else ""
+    with col:
+        st.markdown(f"""
+        <div style="background:{bg}; border:{border}; border-radius:14px; padding:1rem; cursor:pointer; transition:all 0.2s;">
+            <div style="font-size:1.6rem; margin-bottom:0.3rem;">{info['icon']}</div>
+            <div style="font-weight:800; color:{info['color']}; font-size:0.95rem;">{check}{info['label']}</div>
+            <div style="font-size:0.78rem; color:#9ca3af; margin:0.2rem 0 0.5rem; font-style:italic;">{info['tagline']}</div>
+            <div style="font-size:0.82rem; color:#d1d5db; line-height:1.5;">{info['desc']}</div>
+        </div>
+        """, unsafe_allow_html=True)
+        if st.button(f"Select {info['label']}", key=f"sel_{model_key}", use_container_width=True,
+                     type="primary" if selected else "secondary"):
+            st.session_state.gemini_model = model_key
+            st.rerun()
+
+st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
 
 # ── Input Area ────────────────────────────────────────────────────────────────
 with st.container():
@@ -354,6 +389,6 @@ else:
 # ── Footer ────────────────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown(
-    '<p style="text-align:center; color:#4b5563; font-size:0.8rem;">AI Tutor • ML Subject Detection + Google Gemini • Made with ❤️ for education access</p>',
+    '<p style="text-align:center; color:#6366f1; font-size:0.8rem;">AI Tutor • ML Subject Detection + Google Gemini • Made with ❤️ for education access</p>',
     unsafe_allow_html=True
 )
