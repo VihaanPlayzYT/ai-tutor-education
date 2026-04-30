@@ -27,6 +27,33 @@ html, body, [class*="css"] {
 /* ── Hide default Streamlit chrome ── */
 #MainMenu, footer, header { visibility: hidden; }
 
+/* ── App load animation ── */
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glowPulse {
+    0%, 100% { box-shadow: 0 8px 32px rgba(99,102,241,0.25); }
+    50%       { box-shadow: 0 8px 48px rgba(139,92,246,0.55); }
+}
+section[data-testid="stMain"] > div {
+    animation: fadeSlideIn 0.65s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+/* ── Model card select buttons — hidden, card acts as button ── */
+[data-testid="stButton"] button[kind="secondary"].model-select,
+div[data-testid="column"] .stButton > button {
+    opacity: 0 !important;
+    height: 4px !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    pointer-events: all !important;
+    position: relative !important;
+    top: -8px !important;
+}
+
 /* ── Hero Banner ── */
 .hero {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
@@ -263,21 +290,26 @@ for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
     info = MODEL_INFO[model_key]
     selected = st.session_state.gemini_model == model_key
     border = f"2px solid {info['color']}" if selected else "2px solid #2d2d4e"
-    bg = "#1a1a2e" if selected else "#13132a"
+    bg = "#1e1b3a" if selected else "#13132a"
+    glow = f"0 4px 20px {info['color']}33" if selected else "none"
     check = "✓ " if selected else ""
     with col:
         st.markdown(f"""
-        <div style="background:{bg}; border:{border}; border-radius:12px; padding:0.65rem 0.9rem; margin-bottom:0.3rem;">
-            <div style="display:flex; align-items:center; gap:0.4rem;">
+        <div class="model-card" style="background:{bg}; border:{border}; box-shadow:{glow};">
+            <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.2rem;">
                 <span style="font-size:1.1rem;">{info['icon']}</span>
                 <span style="font-weight:800; color:{info['color']}; font-size:0.88rem;">{check}{info['label']}</span>
             </div>
-            <div style="font-size:0.75rem; color:#9ca3af; margin:0.15rem 0; font-style:italic;">{info['tagline']}</div>
+            <div style="font-size:0.74rem; color:#9ca3af; margin-bottom:0.25rem; font-style:italic;">{info['tagline']}</div>
             <div style="font-size:0.76rem; color:#c4b5fd; line-height:1.4;">{info['desc']}</div>
+            <div style="margin-top:0.5rem; font-size:0.72rem; color:{info['color']}; opacity:0.8;">
+                {'● Selected' if selected else 'Click to select →'}
+            </div>
         </div>
         """, unsafe_allow_html=True)
-        if st.button(f"Select {info['label']}", key=f"sel_{model_key}", use_container_width=True,
-                     type="primary" if selected else "secondary"):
+        # Invisible button covering the card area
+        if st.button(f"{'✓ ' if selected else ''}{info['label']}", key=f"sel_{model_key}",
+                     use_container_width=True, type="primary" if selected else "secondary"):
             st.session_state.gemini_model = model_key
             st.rerun()
 
