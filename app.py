@@ -31,21 +31,21 @@ html, body, [class*="css"] {
 .hero {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
     border-radius: 20px;
-    padding: 2.5rem 2rem 2rem;
+    padding: 1.5rem 2rem 1.2rem;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.2rem;
     box-shadow: 0 8px 32px rgba(79,70,229,0.25);
 }
 .hero h1 {
     color: white;
-    font-size: 2.4rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin: 0 0 0.3rem;
+    margin: 0 0 0.2rem;
     letter-spacing: -0.5px;
 }
 .hero p {
     color: rgba(255,255,255,0.85);
-    font-size: 1rem;
+    font-size: 0.9rem;
     margin: 0;
 }
 
@@ -256,7 +256,7 @@ MODEL_INFO = {
     },
 }
 
-st.markdown("#### 🤖 Choose your AI model")
+st.markdown("<p style='font-size:0.85rem; color:#9ca3af; margin-bottom:0.4rem;'>🤖 Choose your AI model</p>", unsafe_allow_html=True)
 col_flash, col_pro = st.columns(2)
 
 for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
@@ -264,22 +264,22 @@ for col, model_key in zip([col_flash, col_pro], MODEL_INFO.keys()):
     selected = st.session_state.gemini_model == model_key
     border = f"2px solid {info['color']}" if selected else "2px solid #2d2d4e"
     bg = "#1a1a2e" if selected else "#13132a"
-    check = "✅ " if selected else ""
+    check = "✓ " if selected else ""
     with col:
         st.markdown(f"""
-        <div style="background:{bg}; border:{border}; border-radius:14px; padding:1rem; cursor:pointer; transition:all 0.2s;">
-            <div style="font-size:1.6rem; margin-bottom:0.3rem;">{info['icon']}</div>
-            <div style="font-weight:800; color:{info['color']}; font-size:0.95rem;">{check}{info['label']}</div>
-            <div style="font-size:0.78rem; color:#9ca3af; margin:0.2rem 0 0.5rem; font-style:italic;">{info['tagline']}</div>
-            <div style="font-size:0.82rem; color:#d1d5db; line-height:1.5;">{info['desc']}</div>
+        <div style="background:{bg}; border:{border}; border-radius:12px; padding:0.65rem 0.9rem; margin-bottom:0.3rem;">
+            <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span style="font-size:1.1rem;">{info['icon']}</span>
+                <span style="font-weight:800; color:{info['color']}; font-size:0.88rem;">{check}{info['label']}</span>
+            </div>
+            <div style="font-size:0.75rem; color:#9ca3af; margin:0.15rem 0; font-style:italic;">{info['tagline']}</div>
+            <div style="font-size:0.76rem; color:#c4b5fd; line-height:1.4;">{info['desc']}</div>
         </div>
         """, unsafe_allow_html=True)
         if st.button(f"Select {info['label']}", key=f"sel_{model_key}", use_container_width=True,
                      type="primary" if selected else "secondary"):
             st.session_state.gemini_model = model_key
             st.rerun()
-
-st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
 
 # ── Input Area ────────────────────────────────────────────────────────────────
 with st.container():
